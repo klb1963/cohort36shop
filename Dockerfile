@@ -1,15 +1,13 @@
-FROM maven:3.8.3-openjdk-17 as build
-WORKDIR /workspace/app
+FROM maven:3.8.3-openjdk-17 AS build
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+RUN mvn clean package -DskipTests
 
-COPY pom.xml .
-COPY src src
+FROM openjdk:17.0.1-jdk-slim
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+ENV JAVA_HOME=/usr/local/openjdk-17
+EXPOSE 8080
+RUN mkdir /app
+COPY --from=build /usr/src/app/target/*.jar /app/app.jar
 
-RUN mvn -DskipTests=true clean package
-RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
-
-FROM eclipse-temurin:17-jre-alpine
-ARG DEPENDENCY=/workspace/app/target/dependency
-COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
-COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
-ENTRYPOINT ["java","-cp","app:app/lib/*", "de.ait_tr.lesson_16_deployment.Lesson16DeploymentApplication"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
