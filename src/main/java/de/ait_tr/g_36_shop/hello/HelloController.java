@@ -1,4 +1,4 @@
-package de.ait_tr.g_36_shop.hallo;
+package de.ait_tr.g_36_shop.hello;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
