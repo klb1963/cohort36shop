@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Profile;
 
 import javax.sql.DataSource;
 
-@Configuration
-@Profile("fake-profile")
+// @Configuration
+// @Profile("fake-profile")
 public class DigitalOceanDataSourceConfiguration {
 
     @Value("${DB_USERNAME}")
